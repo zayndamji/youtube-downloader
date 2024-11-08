@@ -21,12 +21,12 @@ app.get('/script.js', (req, res) => {
 
 app.post('/youtube', async (req, res) => {
   console.log(req.body);
-  if (!req.body.id) {
+  if (!req.body.url) {
     res.send({});
     return;
   }
 
-  const videoInfo = await getVideoInfo(req.body.id);
+  const videoInfo = await getVideoInfo(req.body.url);
 
   res.type('json');
   res.send(videoInfo);
