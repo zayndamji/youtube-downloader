@@ -56,14 +56,14 @@ body {
   justify-content: center;
 }
 
-#youtube-video-container > #youtube-video-thumbnail.active {
+#youtube-video-container > #thumbnail.active {
   width: 30vw;
   min-width: 256px;
   margin: 2vw;
   border-radius: 16px;
 }
 
-#youtube-video-container > #youtube-video-info {
+#youtube-video-container > #info {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,7 +72,7 @@ body {
   margin: 2vw;
 }
 
-#youtube-video-container > #youtube-video-info > #youtube-video-title {
+#youtube-video-container > #info > #title {
   font-weight: bold;
 }
 

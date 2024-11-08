@@ -1,13 +1,16 @@
-document.getElementById('youtube-submit').addEventListener('click', getVideoInfo);
+document.getElementById('url-submit').addEventListener('click', getVideoInfo);
 
 async function getVideoInfo() {
-  document.getElementById('youtube-video-title').textContent = 'Loading...';
-  document.getElementById('youtube-video-channel').textContent = '';
-  
-  document.getElementById('youtube-video-thumbnail').src = '';
-  document.getElementById('youtube-video-thumbnail').classList.remove('active');
+  document.getElementById('title').textContent = 'Loading...';
+  document.getElementById('channel').textContent = '';
 
-  const url = document.getElementById('youtube-input').value;
+  document.getElementById('views').textContent = '';
+  document.getElementById('likes').textContent = '';
+
+  document.getElementById('thumbnail').src = '';
+  document.getElementById('thumbnail').classList.remove('active');
+
+  const url = document.getElementById('url-input').value;
   console.log(url);
 
   const res = await fetch('/youtube', {
@@ -23,15 +26,18 @@ async function getVideoInfo() {
   console.log(json);
 
   if (json.error) {
-    document.getElementById('youtube-video-title').textContent = 'An error occured. Please try again.';
+    document.getElementById('title').textContent = 'An error occured. Please try again.';
     return;
   }
 
   const { formats, videoDetails } = json;
 
-  document.getElementById('youtube-video-title').textContent = videoDetails.title;
-  document.getElementById('youtube-video-channel').textContent = videoDetails.ownerChannelName;
+  document.getElementById('title').textContent = videoDetails.title;
+  document.getElementById('channel').textContent = videoDetails.author.user;
 
-  document.getElementById('youtube-video-thumbnail').src = videoDetails.thumbnails.slice(-1)[0].url;
-  document.getElementById('youtube-video-thumbnail').classList.add('active');
+  document.getElementById('views').innerHTML = `Views: <strong>${videoDetails.viewCount}</strong>`;
+  document.getElementById('likes').innerHTML = `Likes: <strong>${videoDetails.likes}</strong>`;
+
+  document.getElementById('thumbnail').src = videoDetails.thumbnails.slice(-1)[0].url;
+  document.getElementById('thumbnail').classList.add('active');
 }
