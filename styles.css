@@ -6,11 +6,11 @@ body {
   background-color: rgb(22, 22, 22);
   font-size: 16px;
   font-family: Roboto, sans-serif;
+  color: white;
 }
 
 #youtube-input-container {
   background-color: black;
-  color: white;
 
   display: flex;
   justify-content: center;
@@ -46,6 +46,34 @@ body {
   font-family: Roboto, sans-serif;
   font-size: 16px;
   margin: 8px;
+}
+
+#youtube-video-container {
+  display: flex;
+  height: 196px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+#youtube-video-container > #youtube-video-thumbnail.active {
+  width: 30vw;
+  min-width: 256px;
+  margin: 2vw;
+  border-radius: 16px;
+}
+
+#youtube-video-container > #youtube-video-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  margin: 2vw;
+}
+
+#youtube-video-container > #youtube-video-info > #youtube-video-title {
+  font-weight: bold;
 }
 
 #youtube-format-list {
