@@ -13,7 +13,7 @@ async function getVideoInfo(id) {
   }
   
   console.log(`Fetching ${id}...`);
-  const output = JSON.parse((await youtubedl.exec('https://youtube.com/watch?v=' + id, {
+  const output = JSON.parse((await youtubedl.exec(id, {
     dumpSingleJson: true,
     noCheckCertificates: true,
     noWarnings: true,

@@ -3,6 +3,10 @@ const { getVideoInfo } = require('./youtube');
 const express = require('express');
 const app = express();
 
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 app.get('/', (req, res) => {
   res.sendFile('index.html', { root: __dirname });
 });
@@ -15,9 +19,14 @@ app.get('/script.js', (req, res) => {
   res.sendFile('script.js', { root: __dirname });
 });
 
-app.get('/youtube/:id', async (req, res) => {
-  console.log(req.params);
-  const videoInfo = await getVideoInfo(req.params.id);
+app.post('/youtube', async (req, res) => {
+  console.log(req.body);
+  if (!req.body.id) {
+    res.send({});
+    return;
+  }
+
+  const videoInfo = await getVideoInfo(req.body.id);
 
   res.type('json');
   res.send(videoInfo);
