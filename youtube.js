@@ -1,28 +1,30 @@
 const fs = require('fs');
-const util = require('util');
-const youtubedl = require('youtube-dl-exec');
+const ytdl = require("@distube/ytdl-core");
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 if (!fs.existsSync('data/')) {
   fs.mkdirSync('data/');
 }
 
-async function getVideoInfo(id) {
-  if (fs.existsSync(`data/${id}.json`)) {
-    console.log(`${id} has already been fetched.`);
-    return JSON.parse(fs.readFileSync(`data/${id}.json`));
-  }
-  
-  console.log(`Fetching ${id}...`);
-  const output = JSON.parse((await youtubedl.exec(id, {
-    dumpSingleJson: true,
-    noCheckCertificates: true,
-    noWarnings: true,
-    preferFreeFormats: true,
-    addHeader: ['referer:youtube.com', 'user-agent:googlebot']
-  })).stdout);
+async function getVideoInfo(url) {
+  console.log(`Fetching ${url}...`);
 
-  fs.writeFileSync(`data/${output.id}.json`, JSON.stringify(output, undefined, 2));
-  console.log(`${output.id} has been fetched!`);
+  let output = undefined;
+  ytdl.getInfo(url).then(info => {
+    console.log(info.videoDetails.videoId);
+    output = info;
+  }).catch(() => {
+    console.log('An error occurred.');
+    output = {
+      error: 'An error occured.'
+    }
+  });
+
+  while (!output) {
+    await sleep(1000);
+  }
+  console.log(`Fetched ${url}`);
+
   return output;
 }
 

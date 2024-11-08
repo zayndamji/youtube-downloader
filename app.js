@@ -20,6 +20,8 @@ app.get('/script.js', (req, res) => {
 });
 
 app.post('/youtube', async (req, res) => {
+  res.type('json');
+
   console.log(req.body);
   if (!req.body.url) {
     res.send({});
@@ -28,8 +30,16 @@ app.post('/youtube', async (req, res) => {
 
   const videoInfo = await getVideoInfo(req.body.url);
 
-  res.type('json');
-  res.send(videoInfo);
+  if (!videoInfo.error) {
+    res.send({
+      formats: videoInfo.formats,
+      videoDetails: videoInfo.videoDetails
+    });
+  } else {
+    res.send({
+      error: videoInfo.error
+    });
+  }
 });
 
 app.listen(9356);
