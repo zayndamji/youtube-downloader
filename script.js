@@ -38,8 +38,13 @@ async function getVideoInfo() {
   document.getElementById('thumbnail').src = videoDetails.thumbnails.slice(-1)[0].url;
   document.getElementById('thumbnail').classList.add('active');
 
-  for (const format of formats) {
+  const filteredFormats = formats.filter(e => e.hasAudio && !e.hasVideo && e.container == 'mp4');
+
+  for (const format of filteredFormats) {
     const formatDisplay = document.createElement('div');
+
+    // const downloadButton = document.createElement('a');
+
     document.getElementById('youtube-format-list').append(formatDisplay);
   }
 }

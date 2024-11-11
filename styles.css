@@ -92,4 +92,8 @@ body {
   max-width: 1000px;
   border: white solid 1px;
   border-radius: 16px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
 }
