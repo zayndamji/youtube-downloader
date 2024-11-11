@@ -30,8 +30,8 @@ async function getVideoInfo() {
   document.getElementById('title').textContent = videoDetails.title;
   document.getElementById('channel').textContent = videoDetails.ownerChannelName;
 
-  document.getElementById('views').innerHTML = `Views: <strong>${videoDetails.viewCount}</strong>`;
-  document.getElementById('likes').innerHTML = `Likes: <strong>${videoDetails.likes}</strong>`;
+  document.getElementById('views').innerHTML = `Views: <strong>${formatNumber(videoDetails.viewCount)}</strong>`;
+  document.getElementById('likes').innerHTML = `Likes: <strong>${formatNumber(videoDetails.likes)}</strong>`;
   
   document.getElementById('duration').innerHTML = `Duration: <strong>${formatDuration(videoDetails.lengthSeconds)}</strong>`;
 
@@ -63,4 +63,8 @@ function formatDuration(time) {
   if (minutes < 10) {minutes = "0"+minutes;}
   if (seconds < 10) {seconds = "0"+seconds;}
   return hours + ':' + minutes + ':' + seconds;
+}
+
+function formatNumber(number) {
+  return (new Intl.NumberFormat()).format(number);
 }
