@@ -1,16 +1,8 @@
 document.getElementById('url-submit').addEventListener('click', getVideoInfo);
 
 async function getVideoInfo() {
+  resetVideoDetails();
   document.getElementById('title').textContent = 'Loading...';
-  document.getElementById('channel').textContent = '';
-
-  document.getElementById('views').textContent = '';
-  document.getElementById('likes').textContent = '';
-
-  document.getElementById('duration').innerHTML = '';
-
-  document.getElementById('thumbnail').src = '';
-  document.getElementById('thumbnail').classList.remove('active');
 
   const url = document.getElementById('url-input').value;
   console.log(url);
@@ -28,6 +20,7 @@ async function getVideoInfo() {
   console.log(json);
 
   if (json.error) {
+    resetVideoDetails();
     document.getElementById('title').textContent = 'An error occured. Please try again.';
     return;
   }
@@ -35,7 +28,7 @@ async function getVideoInfo() {
   const { formats, videoDetails } = json;
 
   document.getElementById('title').textContent = videoDetails.title;
-  document.getElementById('channel').textContent = videoDetails.author.user;
+  document.getElementById('channel').textContent = videoDetails.ownerChannelName;
 
   document.getElementById('views').innerHTML = `Views: <strong>${videoDetails.viewCount}</strong>`;
   document.getElementById('likes').innerHTML = `Likes: <strong>${videoDetails.likes}</strong>`;
@@ -44,6 +37,19 @@ async function getVideoInfo() {
 
   document.getElementById('thumbnail').src = videoDetails.thumbnails.slice(-1)[0].url;
   document.getElementById('thumbnail').classList.add('active');
+}
+
+function resetVideoDetails() {
+  document.getElementById('title').textContent = '';
+  document.getElementById('channel').textContent = '';
+
+  document.getElementById('views').textContent = '';
+  document.getElementById('likes').textContent = '';
+
+  document.getElementById('duration').innerHTML = '';
+
+  document.getElementById('thumbnail').src = '';
+  document.getElementById('thumbnail').classList.remove('active');
 }
 
 function formatDuration(time) {

@@ -42,4 +42,6 @@ app.post('/youtube', async (req, res) => {
   }
 });
 
-app.listen(9356);
+app.listen(9356, () => {
+  console.log('Server opened on http://localhost:9356');
+});
