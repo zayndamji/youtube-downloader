@@ -19,6 +19,10 @@ app.get('/script.js', (req, res) => {
   res.sendFile('script.js', { root: __dirname });
 });
 
+app.get('/favicon.png', (req, res) => {
+  res.sendFile('favicon.png', { root: __dirname });
+});
+
 app.post('/youtube', async (req, res) => {
   res.type('json');
 
