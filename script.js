@@ -37,6 +37,11 @@ async function getVideoInfo() {
 
   document.getElementById('thumbnail').src = videoDetails.thumbnails.slice(-1)[0].url;
   document.getElementById('thumbnail').classList.add('active');
+
+  for (const format of formats) {
+    const formatDisplay = document.createElement('div');
+    document.getElementById('youtube-format-list').append(formatDisplay);
+  }
 }
 
 function resetVideoDetails() {
