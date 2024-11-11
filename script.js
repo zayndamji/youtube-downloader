@@ -21,7 +21,7 @@ async function getVideoInfo() {
 
   if (json.error) {
     resetVideoDetails();
-    document.getElementById('title').textContent = 'An error occured. Please try again.';
+    document.getElementById('title').textContent = json.error;
     return;
   }
 
