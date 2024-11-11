@@ -31,10 +31,7 @@ app.post('/youtube', async (req, res) => {
   const videoInfo = await getVideoInfo(req.body.url);
 
   if (!videoInfo.error) {
-    res.send({
-      formats: videoInfo.formats,
-      videoDetails: videoInfo.videoDetails
-    });
+    res.send(videoInfo);
   } else {
     res.send({
       error: videoInfo.error

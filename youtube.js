@@ -2,8 +2,8 @@ const fs = require('fs');
 const ytdl = require("@distube/ytdl-core");
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-if (!fs.existsSync('data/')) {
-  fs.mkdirSync('data/');
+if (!fs.existsSync('cache/')) {
+  fs.mkdirSync('cache/');
 }
 
 async function getVideoInfo(url) {
@@ -23,9 +23,15 @@ async function getVideoInfo(url) {
 
   console.log(`Identified id ${id}.`);
 
+  if (fs.existsSync('cache/' + id + '.json')) {
+    return JSON.parse(fs.readFileSync('cache/' + id + '.json'));
+  }
+
   ytdl.getInfo(id).then(info => {
-    console.log(info.videoDetails.videoId);
-    output = info;
+    output = {
+      formats: info.formats,
+      videoDetails: info.videoDetails
+    };
   }).catch(() => {
     console.log('Invalid Video ID');
     output = {
@@ -36,7 +42,9 @@ async function getVideoInfo(url) {
   while (!output) {
     await sleep(1000);
   }
-  console.log(`Fetched ${url}`);
+  console.log(`Fetched YouTube video ${id}.`);
+
+  fs.writeFileSync('cache/' + id + '.json', JSON.stringify(output, undefined, 2));
 
   return output;
 }
