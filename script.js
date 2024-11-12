@@ -38,12 +38,32 @@ async function getVideoInfo() {
   document.getElementById('thumbnail').src = videoDetails.thumbnails.slice(-1)[0].url;
   document.getElementById('thumbnail').classList.add('active');
 
-  const filteredFormats = formats.filter(e => e.hasAudio && !e.hasVideo && e.container == 'mp4');
+  const filteredFormats = formats.filter(format => format.mimeType && 
+                                                   (format.mimeType.startsWith('audio/mp4') ||
+                                                    format.mimeType.startsWith('video/mp4') ||
+                                                    format.mimeType.startsWith('audio/webm') ||
+                                                    format.mimeType.startsWith('video/webm')));
+  
+  console.log(filteredFormats);
 
   for (const format of filteredFormats) {
     const formatDisplay = document.createElement('div');
 
-    // const downloadButton = document.createElement('a');
+    const extension = document.createElement('span');
+    extension.textContent = getExtension(format).substring(1).toUpperCase();
+    formatDisplay.append(extension);
+
+    const fileType = document.createElement('span');
+    fileType.textContent = format.mimeType.substring(0, format.mimeType.indexOf('/')).toUpperCase();
+    formatDisplay.append(fileType);
+
+    const quality = document.createElement('span');
+    if (format.qualityLabel) {
+      quality.textContent = format.qualityLabel.toUpperCase();
+    } else {
+      quality.textContent = format.audioQuality;
+    }
+    formatDisplay.append(quality);
 
     document.getElementById('youtube-format-list').append(formatDisplay);
   }
@@ -60,6 +80,16 @@ function resetVideoDetails() {
 
   document.getElementById('thumbnail').src = '';
   document.getElementById('thumbnail').classList.remove('active');
+}
+
+function getExtension(format) {
+  let fileExtension = '';
+
+  if (format.mimeType.startsWith('audio/mp4')) fileExtension = '.mp3';
+  if (format.mimeType.startsWith('video/mp4')) fileExtension = '.mp4';
+  if (format.mimeType.startsWith('video/webm') || format.mimeType.startsWith('audio/webm')) fileExtension = '.webm';
+
+  return fileExtension;
 }
 
 function formatDuration(time) {

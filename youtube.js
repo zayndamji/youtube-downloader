@@ -65,10 +65,7 @@ async function downloadVideo(id, itag) {
 
   const format = formats[0];
 
-  let fileExtension = '';
-  if (format.mimeType.startsWith('audio/mp4')) fileExtension = '.mp3';
-  if (format.mimeType.startsWith('video/mp4')) fileExtension = '.mp4';
-  if (format.mimeType.startsWith('video/webm') || format.mimeType.startsWith('audio/webm')) fileExtension = '.webm';
+  const fileExtension = getExtension(format);
 
   let done = false;
   ytdl(id, { quality: itag })
@@ -81,6 +78,16 @@ async function downloadVideo(id, itag) {
 
   console.log(`Finished downloading id ${id} itag ${itag}.`);
   return true;
+}
+
+function getExtension(format) {
+  let fileExtension = '';
+
+  if (format.mimeType.startsWith('audio/mp4')) fileExtension = '.mp3';
+  if (format.mimeType.startsWith('video/mp4')) fileExtension = '.mp4';
+  if (format.mimeType.startsWith('video/webm') || format.mimeType.startsWith('audio/webm')) fileExtension = '.webm';
+
+  return fileExtension;
 }
 
 module.exports = {
