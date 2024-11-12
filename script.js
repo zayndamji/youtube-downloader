@@ -25,68 +25,48 @@ async function getVideoInfo() {
     return;
   }
 
-  const { formats, videoDetails } = json;
+  const { video, audio, details } = json;
 
-  document.getElementById('title').textContent = videoDetails.title;
-  document.getElementById('channel').textContent = videoDetails.ownerChannelName;
+  document.getElementById('title').textContent = details.title;
+  document.getElementById('channel').textContent = details.ownerChannelName;
 
-  document.getElementById('views').innerHTML = `Views: <strong>${formatNumber(videoDetails.viewCount)}</strong>`;
-  document.getElementById('likes').innerHTML = `Likes: <strong>${formatNumber(videoDetails.likes)}</strong>`;
+  document.getElementById('views').innerHTML = `Views: <strong>${formatNumber(details.viewCount)}</strong>`;
+  document.getElementById('likes').innerHTML = `Likes: <strong>${formatNumber(details.likes)}</strong>`;
   
-  document.getElementById('duration').innerHTML = `Duration: <strong>${formatDuration(videoDetails.lengthSeconds)}</strong>`;
+  document.getElementById('duration').innerHTML = `Duration: <strong>${formatDuration(details.lengthSeconds)}</strong>`;
 
-  document.getElementById('thumbnail').src = videoDetails.thumbnails.slice(-1)[0].url;
+  document.getElementById('thumbnail').src = details.thumbnails.slice(-1)[0].url;
   document.getElementById('thumbnail').classList.add('active');
-
-  const videoFormats = formats.filter(format => format.mimeType && (format.mimeType.startsWith('video/mp4') || format.mimeType.startsWith('video/webm')))
-                              .map(e => {
-                                e.extension = getExtension(e).substring(1).toUpperCase();
-                                e.fileType = e.mimeType.substring(0, e.mimeType.indexOf('/')).toUpperCase();
-                                e.quality = e.qualityLabel.toUpperCase();
-                                return e;
-                              })
-                              .sort((a, b) => a.quality.localeCompare(b.quality))
-                              .sort((a, b) => a.extension.localeCompare(b.extension));
   
-  for (const format of videoFormats) {
+  for (const format of video) {
     const formatDisplay = document.createElement('div');
 
     const extension = document.createElement('span');
-    extension.textContent = format.extension;
+    extension.textContent = format[0];
     formatDisplay.append(extension);
 
     const quality = document.createElement('span');
-    quality.textContent = format.quality;
+    quality.textContent = format[1];
     formatDisplay.append(quality);
 
     document.getElementById('video-formats').append(formatDisplay);
   }
 
-  const audioFormats = formats.filter(format => format.mimeType && (format.mimeType.startsWith('audio/mp4') || format.mimeType.startsWith('audio/webm')))
-                              .map(e => {
-                                e.extension = getExtension(e).substring(1).toUpperCase();
-                                e.fileType = e.mimeType.substring(0, e.mimeType.indexOf('/')).toUpperCase();
-                                e.quality = e.audioBitrate + ' bits/sec';
-                                return e;
-                              })
-                              .sort((a, b) => b.audioBitrate - a.audioBitrate)
-                              .sort((a, b) => a.extension.localeCompare(b.extension));
-
-  for (const format of audioFormats) {
+  for (const format of audio) {
     const formatDisplay = document.createElement('div');
 
     const extension = document.createElement('span');
-    extension.textContent = format.extension;
+    extension.textContent = format[0];
     formatDisplay.append(extension);
 
     const quality = document.createElement('span');
-    quality.textContent = format.quality;
+    quality.textContent = format[1];
     formatDisplay.append(quality);
 
     document.getElementById('audio-formats').append(formatDisplay);
   }
   
-  console.log(videoFormats, audioFormats);
+  console.log(video, audio);
 }
 
 function resetVideoDetails() {

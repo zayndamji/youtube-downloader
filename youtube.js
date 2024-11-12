@@ -6,6 +6,23 @@ if (!fs.existsSync('cache/')) {
   fs.mkdirSync('cache/');
 }
 
+async function getFormats(url) {
+  const info = await getVideoInfo(url);
+  if (info.error) return info;
+
+  const formats = info.formats;
+
+  return {
+    video: formats.filter(e => e.fileType == 'VIDEO' && e.extension != 'DAT').map(e => [e.extension, e.quality])
+                .sort((a, b) => a[1].localeCompare(b[1]))
+                .sort((a, b) => a[0].localeCompare(b[0])),
+    audio: formats.filter(e => e.fileType == 'AUDIO' && e.extension != 'DAT').map(e => [e.extension, e.quality])
+                .sort((a, b) => a[1].localeCompare(b[1]))
+                .sort((a, b) => a[0].localeCompare(b[0])),
+    details: info.videoDetails
+  };
+}
+
 async function getVideoInfo(url) {
   console.log(`Fetching ${url}...`);
 
@@ -31,10 +48,16 @@ async function getVideoInfo(url) {
     output = {
       formats: info.formats.sort((a, b) => b.itag - a.itag).filter((item, pos, ary) => {
         return pos == 0 || item.itag != ary[pos - 1].itag;
+      }).map(e => {
+        e.extension = getExtension(e).substring(1).toUpperCase();
+        e.fileType = e.mimeType ? e.mimeType.substring(0, e.mimeType.indexOf('/')).toUpperCase() : 'UNKNOWN';
+        e.quality = e.audioBitrate ? e.audioBitrate + ' bits/sec' : e.qualityLabel ? e.qualityLabel.toUpperCase() : 'UNKNOWN';
+        return e;
       }),
       videoDetails: info.videoDetails
     };
-  }).catch(() => {
+  }).catch((e) => {
+    console.log(e);
     console.log('Invalid Video ID');
     output = {
       error: 'Invalid Video ID'
@@ -83,7 +106,9 @@ async function downloadVideo(id, itag) {
 }
 
 function getExtension(format) {
-  let fileExtension = '';
+  let fileExtension = '.dat';
+
+  if (!format.mimeType) return fileExtension;
 
   if (format.mimeType.startsWith('audio/mp4')) fileExtension = '.mp3';
   if (format.mimeType.startsWith('video/mp4')) fileExtension = '.mp4';
@@ -93,6 +118,7 @@ function getExtension(format) {
 }
 
 module.exports = {
+  getFormats,
   getVideoInfo,
   downloadVideo
 };

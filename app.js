@@ -1,4 +1,4 @@
-const { getVideoInfo } = require('./youtube');
+const { getVideoInfo, getFormats } = require('./youtube');
 
 const express = require('express');
 const app = express();
@@ -32,7 +32,7 @@ app.post('/youtube', async (req, res) => {
     return;
   }
 
-  const videoInfo = await getVideoInfo(req.body.url);
+  const videoInfo = await getFormats(req.body.url);
 
   if (!videoInfo.error) {
     res.send(videoInfo);
