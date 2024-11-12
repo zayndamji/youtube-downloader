@@ -38,35 +38,33 @@ async function getVideoInfo() {
   document.getElementById('thumbnail').src = videoDetails.thumbnails.slice(-1)[0].url;
   document.getElementById('thumbnail').classList.add('active');
 
-  const filteredFormats = formats.filter(format => format.mimeType && 
-                                                   (format.mimeType.startsWith('audio/mp4') ||
-                                                    format.mimeType.startsWith('video/mp4') ||
-                                                    format.mimeType.startsWith('audio/webm') ||
-                                                    format.mimeType.startsWith('video/webm')));
+  const videoFormats = formats.filter(format => format.mimeType && (format.mimeType.startsWith('video/mp4') || format.mimeType.startsWith('video/webm')))
+                              .map(e => {
+                                e.extension = getExtension(e).substring(1).toUpperCase();
+                                e.fileType = e.mimeType.substring(0, e.mimeType.indexOf('/')).toUpperCase();
+                                e.quality = e.qualityLabel.toUpperCase();
+                                return e;
+                              })
+                              .sort((a, b) => a.quality.localeCompare(b.quality))
+                              .sort((a, b) => a.extension.localeCompare(b.extension));
   
-  console.log(filteredFormats);
-
-  for (const format of filteredFormats) {
+  for (const format of videoFormats) {
     const formatDisplay = document.createElement('div');
 
     const extension = document.createElement('span');
-    extension.textContent = getExtension(format).substring(1).toUpperCase();
+    extension.textContent = format.extension;
     formatDisplay.append(extension);
 
-    const fileType = document.createElement('span');
-    fileType.textContent = format.mimeType.substring(0, format.mimeType.indexOf('/')).toUpperCase();
-    formatDisplay.append(fileType);
-
     const quality = document.createElement('span');
-    if (format.qualityLabel) {
-      quality.textContent = format.qualityLabel.toUpperCase();
-    } else {
-      quality.textContent = format.audioQuality;
-    }
+    quality.textContent = format.quality;
     formatDisplay.append(quality);
 
     document.getElementById('youtube-format-list').append(formatDisplay);
   }
+
+  const audioFormats = formats.filter(format => format.mimeType && (format.mimeType.startsWith('audio/mp4') || format.mimeType.startsWith('audio/webm')));
+  
+  console.log(videoFormats, audioFormats);
 }
 
 function resetVideoDetails() {

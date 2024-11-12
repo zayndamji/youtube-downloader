@@ -86,18 +86,16 @@ body {
 }
 
 #youtube-format-list > div {
-  height: 48px;
   background-color: black;
   width: 90%;
   max-width: 1000px;
   border: white solid 1px;
   border-radius: 16px;
   display: flex;
-  gap: 16px;
   justify-content: center;
   align-items: center;
 }
 
 #youtube-format-list > div > span {
-  margin: 8px;
+  margin: 4px 8px;
 }
