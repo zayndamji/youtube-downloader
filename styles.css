@@ -78,6 +78,15 @@ body {
 
 #youtube-format-list {
   display: flex;
+  flex-direction: row;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+  align-items: baseline;
+}
+
+#youtube-format-list > div {
+  display: flex;
   flex-direction: column;
   gap: 16px;
   width: 100%;
@@ -85,7 +94,7 @@ body {
   align-items: center;
 }
 
-#youtube-format-list > div {
+#youtube-format-list > div > div {
   background-color: black;
   width: 90%;
   max-width: 1000px;
@@ -96,6 +105,6 @@ body {
   align-items: center;
 }
 
-#youtube-format-list > div > span {
+#youtube-format-list > div > div > span {
   margin: 4px 8px;
 }

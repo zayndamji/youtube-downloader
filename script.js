@@ -59,10 +59,32 @@ async function getVideoInfo() {
     quality.textContent = format.quality;
     formatDisplay.append(quality);
 
-    document.getElementById('youtube-format-list').append(formatDisplay);
+    document.getElementById('video-formats').append(formatDisplay);
   }
 
-  const audioFormats = formats.filter(format => format.mimeType && (format.mimeType.startsWith('audio/mp4') || format.mimeType.startsWith('audio/webm')));
+  const audioFormats = formats.filter(format => format.mimeType && (format.mimeType.startsWith('audio/mp4') || format.mimeType.startsWith('audio/webm')))
+                              .map(e => {
+                                e.extension = getExtension(e).substring(1).toUpperCase();
+                                e.fileType = e.mimeType.substring(0, e.mimeType.indexOf('/')).toUpperCase();
+                                e.quality = e.audioBitrate + ' bits/sec';
+                                return e;
+                              })
+                              .sort((a, b) => b.audioBitrate - a.audioBitrate)
+                              .sort((a, b) => a.extension.localeCompare(b.extension));
+
+  for (const format of audioFormats) {
+    const formatDisplay = document.createElement('div');
+
+    const extension = document.createElement('span');
+    extension.textContent = format.extension;
+    formatDisplay.append(extension);
+
+    const quality = document.createElement('span');
+    quality.textContent = format.quality;
+    formatDisplay.append(quality);
+
+    document.getElementById('audio-formats').append(formatDisplay);
+  }
   
   console.log(videoFormats, audioFormats);
 }
@@ -78,6 +100,9 @@ function resetVideoDetails() {
 
   document.getElementById('thumbnail').src = '';
   document.getElementById('thumbnail').classList.remove('active');
+
+  document.getElementById('video-formats').textContent = '';
+  document.getElementById('audio-formats').textContent = '';
 }
 
 function getExtension(format) {

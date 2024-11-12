@@ -29,7 +29,9 @@ async function getVideoInfo(url) {
 
   ytdl.getInfo(id).then(info => {
     output = {
-      formats: info.formats,
+      formats: info.formats.sort((a, b) => b.itag - a.itag).filter((item, pos, ary) => {
+        return pos == 0 || item.itag != ary[pos - 1].itag;
+      }),
       videoDetails: info.videoDetails
     };
   }).catch(() => {
