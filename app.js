@@ -43,6 +43,14 @@ app.post('/youtube', async (req, res) => {
   }
 });
 
+app.post('/download', (req, res) => {
+  console.log(req.body);
+  if (!req.body.itag || !req.body.id) {
+    res.end();
+    return;
+  }
+});
+
 app.listen(9356, () => {
   console.log('Server opened on http://localhost:9356');
 });
