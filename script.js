@@ -48,6 +48,20 @@ async function getVideoInfo() {
     document.getElementById('extension').append(option);
   }
 
+  for (const [_, quality] of video.filter(e => e[0] == document.getElementById('extension').value)) {
+    const option = document.createElement('option');
+    option.value = quality;
+    option.textContent = quality;
+    document.getElementById('videoQuality').append(option);
+  }
+
+  for (const [_, quality] of audio.filter(e => e[0] == document.getElementById('extension').value)) {
+    const option = document.createElement('option');
+    option.value = quality;
+    option.textContent = quality;
+    document.getElementById('audioQuality').append(option);
+  }
+
   document.getElementById('youtube-format-list').style.display = 'flex';
   
   console.log(video, audio);
