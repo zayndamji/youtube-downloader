@@ -168,7 +168,7 @@ async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQua
   console.log('File is combined.');
 
   return {
-    filePath: filePath.substring(filePath.lastIndexOf('/'))
+    filePath: '/cache/' + filePath.substring(filePath.lastIndexOf('/'))
   };
 }
 

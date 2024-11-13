@@ -19,6 +19,13 @@ document.getElementById('downloadVideo').addEventListener('click', async () => {
   const json = await res.json();
 
   console.log(json);
+
+  if (json.error) {
+    console.error(json.error);
+    return;
+  }
+
+  downloadFile(json.filePath, document.getElementById('title').textContent);
 });
 
 resetVideoDetails();
@@ -124,6 +131,15 @@ function resetVideoDetails() {
   document.getElementById('extension').textContent = '';
   document.getElementById('videoQuality').textContent = '';
   document.getElementById('audioQuality').textContent = '';
+}
+
+function downloadFile(url, filename) {
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 function formatDuration(time) {
