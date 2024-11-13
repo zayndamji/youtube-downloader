@@ -1,5 +1,6 @@
 const fs = require('fs');
 const ytdl = require("@distube/ytdl-core");
+const ffmpeg = require('fluent-ffmpeg');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 if (!fs.existsSync('cache/')) {
@@ -93,18 +94,21 @@ async function downloadVideo(id, itag) {
   const format = formats[0];
 
   const fileExtension = getExtension(format);
+  const filePath = 'cache/' + id + '_' + itag + fileExtension;
 
-  let done = false;
-  ytdl(id, { quality: itag })
-    .pipe(fs.createWriteStream('cache/' + id + '_' + itag + fileExtension))
-    .on('close', () => done = true);
-  
-  while (!done) {
-    await sleep(1000);
+  if (!fs.existsSync(filePath)) {
+    let done = false;
+    ytdl(id, { quality: itag })
+      .pipe(fs.createWriteStream(filePath))
+      .on('close', () => done = true);
+    
+    while (!done) {
+      await sleep(1000);
+    }
   }
 
   console.log(`Finished downloading id ${id} itag ${itag}.`);
-  return 'cache/' + id + '_' + itag + fileExtension;
+  return filePath;
 }
 
 async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQuality) {
@@ -141,9 +145,30 @@ async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQua
     }
   }
 
+  const filePath = videoPath.substring(0, videoPath.lastIndexOf('.')) + audioPath.substring(audioPath.lastIndexOf('_'));
+  console.log('Output file: ' + filePath);
+
+  if (!fs.existsSync(filePath)) {
+    let done = false;
+    ffmpeg()
+      .input(videoPath)
+      .input(audioPath)
+      .videoCodec('copy')
+      .audioCodec('copy')
+      .output(filePath)
+      .on('end', () => done = true)
+      .on('error', (err) => console.error(err.message))
+      .run();
+
+    while (!done) {
+      await sleep(1000);
+    }
+  }
+
+  console.log('File is combined.');
+
   return {
-    videoPath,
-    audioPath
+    filePath: filePath.substring(filePath.lastIndexOf('/'))
   };
 }
 
