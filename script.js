@@ -85,16 +85,6 @@ function resetVideoDetails() {
   document.getElementById('audio-formats').textContent = '';
 }
 
-function getExtension(format) {
-  let fileExtension = '';
-
-  if (format.mimeType.startsWith('audio/mp4')) fileExtension = '.mp3';
-  if (format.mimeType.startsWith('video/mp4')) fileExtension = '.mp4';
-  if (format.mimeType.startsWith('video/webm') || format.mimeType.startsWith('audio/webm')) fileExtension = '.webm';
-
-  return fileExtension;
-}
-
 function formatDuration(time) {
   var sec_num = parseInt(time, 10);
 

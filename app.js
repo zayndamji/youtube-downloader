@@ -1,4 +1,4 @@
-const { getVideoInfo, getFormats } = require('./youtube');
+const { getFormats, downloadVideoFromFormat } = require('./youtube');
 
 const express = require('express');
 const app = express();
@@ -43,12 +43,15 @@ app.post('/youtube', async (req, res) => {
   }
 });
 
-app.post('/download', (req, res) => {
+app.post('/download', async (req, res) => {
   console.log(req.body);
-  if (!req.body.itag || !req.body.id) {
+  if (!req.body.extension || !req.body.videoQuality || !req.body.audioQuality || !req.body.id) {
     res.end();
     return;
   }
+
+  const filepaths = await downloadVideoFromFormat(req.body.id, req.body.extension, req.body.videoQuality, req.body.audioQuality);
+  res.send(filepaths);
 });
 
 app.listen(9356, () => {

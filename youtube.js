@@ -13,7 +13,7 @@ async function getFormats(url) {
   const formats = info.formats;
 
   return {
-    video: formats.filter(e => e.fileType == 'VIDEO' && e.extension != 'DAT').map(e => [e.extension, e.quality, e.itag])
+    video: formats.filter(e => e.fileType == 'VIDEO' && e.extension != 'DAT' && e.videoCodec != 'H.264').map(e => [e.extension, e.quality, e.itag])
                 .sort((a, b) => b[1].localeCompare(a[1]))
                 .sort((a, b) => b[1].length - a[1].length)
                 .sort((a, b) => a[0].localeCompare(b[0])),
@@ -81,13 +81,13 @@ async function downloadVideo(id, itag) {
 
   const info = await getVideoInfo(id);
   if (info.error) {
-    return false;
+    return '';
   }
 
   const formats = info.formats.filter(e => e.itag == itag);
   if (formats.length < 1) {
     console.log('Not a valid format.');
-    return false;
+    return '';
   }
 
   const format = formats[0];
@@ -104,7 +104,47 @@ async function downloadVideo(id, itag) {
   }
 
   console.log(`Finished downloading id ${id} itag ${itag}.`);
-  return true;
+  return 'cache/' + id + '_' + itag + fileExtension;
+}
+
+async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQuality) {
+  const info = await getFormats(id);
+  if (info.error) return info;
+
+  const { video, audio } = info;
+
+  let videoPath;
+  for (const [ extension, quality, itag ] of video) {
+    if (extension == fileExtension && quality == videoQuality) {
+      videoPath = await downloadVideo(id, itag);
+      if (!videoPath) {
+        return {
+          error: 'Unable to process video.'
+        }
+      }
+
+      break;
+    }
+  }
+
+  let audioPath;
+  for (const [ extension, quality, itag ] of audio) {
+    if (extension == fileExtension && quality == audioQuality) {
+      const audioPath = await downloadVideo(id, itag);
+      if (!audioPath) {
+        return {
+          error: 'Unable to process audio.'
+        }
+      }
+
+      break;
+    }
+  }
+
+  return {
+    videoPath,
+    audioPath
+  };
 }
 
 function getExtension(format) {
@@ -112,8 +152,7 @@ function getExtension(format) {
 
   if (!format.mimeType) return fileExtension;
 
-  if (format.mimeType.startsWith('audio/mp4')) fileExtension = '.mp3';
-  if (format.mimeType.startsWith('video/mp4')) fileExtension = '.mp4';
+  if (format.mimeType.startsWith('video/mp4') || format.mimeType.startsWith('audio/mp4')) fileExtension = '.mp4';
   if (format.mimeType.startsWith('video/webm') || format.mimeType.startsWith('audio/webm')) fileExtension = '.webm';
 
   return fileExtension;
@@ -121,6 +160,5 @@ function getExtension(format) {
 
 module.exports = {
   getFormats,
-  getVideoInfo,
-  downloadVideo
+  downloadVideoFromFormat
 };
