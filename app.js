@@ -51,6 +51,7 @@ app.post('/download', async (req, res) => {
   }
 
   const filepaths = await downloadVideoFromFormat(req.body.id, req.body.extension, req.body.videoQuality, req.body.audioQuality);
+  console.log(filepaths);
   res.send(filepaths);
 });
 

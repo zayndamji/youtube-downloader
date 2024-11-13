@@ -130,7 +130,7 @@ async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQua
   let audioPath;
   for (const [ extension, quality, itag ] of audio) {
     if (extension == fileExtension && quality == audioQuality) {
-      const audioPath = await downloadVideo(id, itag);
+      audioPath = await downloadVideo(id, itag);
       if (!audioPath) {
         return {
           error: 'Unable to process audio.'

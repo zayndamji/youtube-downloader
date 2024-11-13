@@ -1,12 +1,24 @@
 document.getElementById('url-submit').addEventListener('click', getVideoInfo);
 
-document.getElementById('downloadVideo').addEventListener('click', () => {
+document.getElementById('downloadVideo').addEventListener('click', async () => {
   const id = document.getElementById('youtube-video-container').getAttribute('youtube-id');
   const extension = document.getElementById('extension').value;
   const videoQuality = document.getElementById('videoQuality').value;
   const audioQuality = document.getElementById('audioQuality').value;
 
   console.log(id, extension, videoQuality, audioQuality);
+
+  const res = await fetch('/download', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id, extension, videoQuality, audioQuality })
+  });
+  const json = await res.json();
+
+  console.log(json);
 });
 
 resetVideoDetails();
