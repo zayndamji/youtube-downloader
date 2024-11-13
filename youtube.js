@@ -153,7 +153,7 @@ async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQua
     ffmpeg()
       .input(videoPath)
       .input(audioPath)
-      .videoCodec(fileExtension == 'MP4' ? 'libx264' : 'copy')
+      .videoCodec('copy')
       .audioCodec('copy')
       .output(filePath)
       .on('end', () => done = true)
