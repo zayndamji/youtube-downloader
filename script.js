@@ -1,5 +1,14 @@
 document.getElementById('url-submit').addEventListener('click', getVideoInfo);
 
+document.getElementById('downloadVideo').addEventListener('click', () => {
+  const id = document.getElementById('youtube-video-container').getAttribute('youtube-id');
+  const extension = document.getElementById('extension').value;
+  const videoQuality = document.getElementById('videoQuality').value;
+  const audioQuality = document.getElementById('audioQuality').value;
+
+  console.log(id, extension, videoQuality, audioQuality);
+});
+
 resetVideoDetails();
 
 async function getVideoInfo() {
@@ -28,6 +37,8 @@ async function getVideoInfo() {
   }
 
   const { video, audio, details } = json;
+
+  document.getElementById('youtube-video-container').setAttribute('youtube-id', details.videoId);
 
   document.getElementById('title').textContent = details.title;
   document.getElementById('channel').textContent = details.ownerChannelName;
