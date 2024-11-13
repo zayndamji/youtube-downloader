@@ -13,11 +13,13 @@ async function getFormats(url) {
   const formats = info.formats;
 
   return {
-    video: formats.filter(e => e.fileType == 'VIDEO' && e.extension != 'DAT').map(e => [e.extension, e.quality])
-                .sort((a, b) => a[1].localeCompare(b[1]))
+    video: formats.filter(e => e.fileType == 'VIDEO' && e.extension != 'DAT').map(e => [e.extension, e.quality, e.itag])
+                .sort((a, b) => b[1].localeCompare(a[1]))
+                .sort((a, b) => b[1].length - a[1].length)
                 .sort((a, b) => a[0].localeCompare(b[0])),
-    audio: formats.filter(e => e.fileType == 'AUDIO' && e.extension != 'DAT').map(e => [e.extension, e.quality])
-                .sort((a, b) => a[1].localeCompare(b[1]))
+    audio: formats.filter(e => e.fileType == 'AUDIO' && e.extension != 'DAT').map(e => [e.extension, e.quality, e.itag])
+                .sort((a, b) => b[1].localeCompare(a[1]))
+                .sort((a, b) => b[1].length - a[1].length)
                 .sort((a, b) => a[0].localeCompare(b[0])),
     details: info.videoDetails
   };
