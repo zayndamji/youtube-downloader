@@ -48,6 +48,26 @@ async function getVideoInfo() {
     document.getElementById('extension').append(option);
   }
 
+  // remove event listeners
+  document.getElementById('extension').parentNode.replaceChild(
+    document.getElementById('extension').cloneNode(true),
+    document.getElementById('extension')
+  );
+
+  document.getElementById('extension').addEventListener('change', () => renderQualities(video, audio));
+  renderQualities(video, audio);
+
+  document.getElementById('youtube-format-list').style.display = 'flex';
+  
+  console.log(video, audio);
+}
+
+function renderQualities(video, audio) {
+  if (document.getElementById('extension').value == '') return;
+
+  document.getElementById('videoQuality').textContent = '';
+  document.getElementById('audioQuality').textContent = '';
+
   for (const [_, quality] of video.filter(e => e[0] == document.getElementById('extension').value)) {
     const option = document.createElement('option');
     option.value = quality;
@@ -61,10 +81,6 @@ async function getVideoInfo() {
     option.textContent = quality;
     document.getElementById('audioQuality').append(option);
   }
-
-  document.getElementById('youtube-format-list').style.display = 'flex';
-  
-  console.log(video, audio);
 }
 
 function resetVideoDetails() {
