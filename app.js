@@ -1,7 +1,10 @@
 const { getFormats, downloadVideoFromFormat } = require('./youtube');
 
+const fs = require('fs');
+
 const express = require('express');
 const app = express();
+app.use(clearStaleCache);
 app.use('/cache', express.static('cache'));
 
 const bodyParser = require('body-parser');
@@ -59,3 +62,25 @@ app.post('/download', async (req, res) => {
 app.listen(9356, () => {
   console.log('Server opened on http://localhost:9356');
 });
+
+const cacheRefreshTimeHours = 2;
+const cacheRefreshTimeMs = 1000 * 60 * 60 * cacheRefreshTimeHours;
+
+function clearStaleCache(req, res, next) {
+  const cache = fs.readdirSync('cache/').filter(e => e != '.DS_Store');
+  for (const file of cache) {
+    const stat = fs.statSync('cache/' + file);
+
+    const currentTime = (new Date()).getTime();
+    const fileTime = stat.mtime.getTime();
+    const diff = currentTime - fileTime;
+
+    if (diff > cacheRefreshTimeMs) {
+      console.log(`${file} is ${diff} ms old.`);
+      fs.rmSync('cache/' + file);
+      console.log(`${file} has been removed.`);
+    }
+  }
+
+  next();
+}
