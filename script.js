@@ -37,34 +37,18 @@ async function getVideoInfo() {
 
   document.getElementById('thumbnail').src = details.thumbnails.slice(-1)[0].url;
   document.getElementById('thumbnail').classList.add('active');
-  
-  for (const format of video) {
-    const formatDisplay = document.createElement('div');
 
-    const extension = document.createElement('span');
-    extension.textContent = format[0];
-    formatDisplay.append(extension);
+  const extensions = Array.from(new Set(video.map(e => e[0])));
+  console.log(extensions);
 
-    const quality = document.createElement('span');
-    quality.textContent = format[1];
-    formatDisplay.append(quality);
-
-    document.getElementById('video-formats').append(formatDisplay);
+  for (const extension of extensions) {
+    const option = document.createElement('option');
+    option.value = extension;
+    option.textContent = extension;
+    document.getElementById('extension').append(option);
   }
 
-  for (const format of audio) {
-    const formatDisplay = document.createElement('div');
-
-    const extension = document.createElement('span');
-    extension.textContent = format[0];
-    formatDisplay.append(extension);
-
-    const quality = document.createElement('span');
-    quality.textContent = format[1];
-    formatDisplay.append(quality);
-
-    document.getElementById('audio-formats').append(formatDisplay);
-  }
+  document.getElementById('youtube-format-list').style.display = 'flex';
   
   console.log(video, audio);
 }
@@ -81,8 +65,10 @@ function resetVideoDetails() {
   document.getElementById('thumbnail').src = '';
   document.getElementById('thumbnail').classList.remove('active');
 
-  document.getElementById('video-formats').textContent = '';
-  document.getElementById('audio-formats').textContent = '';
+  document.getElementById('youtube-format-list').style.display = 'none';
+  document.getElementById('extension').textContent = '';
+  document.getElementById('videoQuality').textContent = '';
+  document.getElementById('audioQuality').textContent = '';
 }
 
 function formatDuration(time) {
