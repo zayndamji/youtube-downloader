@@ -1,5 +1,7 @@
 document.getElementById('url-submit').addEventListener('click', getVideoInfo);
 
+resetVideoDetails();
+
 async function getVideoInfo() {
   resetVideoDetails();
   document.getElementById('title').textContent = 'Loading...';
@@ -57,7 +59,7 @@ async function getVideoInfo() {
   document.getElementById('extension').addEventListener('change', () => renderQualities(video, audio));
   renderQualities(video, audio);
 
-  document.getElementById('youtube-format-list').style.display = 'flex';
+  document.getElementById('format-display').style.display = 'block';
   
   console.log(video, audio);
 }
@@ -95,7 +97,7 @@ function resetVideoDetails() {
   document.getElementById('thumbnail').src = '';
   document.getElementById('thumbnail').classList.remove('active');
 
-  document.getElementById('youtube-format-list').style.display = 'none';
+  document.getElementById('format-display').style.display = 'none';
   document.getElementById('extension').textContent = '';
   document.getElementById('videoQuality').textContent = '';
   document.getElementById('audioQuality').textContent = '';
