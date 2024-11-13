@@ -153,7 +153,7 @@ async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQua
     ffmpeg()
       .input(videoPath)
       .input(audioPath)
-      .videoCodec('copy')
+      .videoCodec(fileExtension == 'MP4' ? 'libx264' : 'copy')
       .audioCodec('copy')
       .output(filePath)
       .on('end', () => done = true)
@@ -168,7 +168,7 @@ async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQua
   console.log('File is combined.');
 
   return {
-    filePath: '/cache/' + filePath.substring(filePath.lastIndexOf('/'))
+    filePath: '/cache' + filePath.substring(filePath.lastIndexOf('/'))
   };
 }
 
