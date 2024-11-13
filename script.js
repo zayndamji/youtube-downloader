@@ -116,7 +116,7 @@ function renderQualities(video, audio) {
 }
 
 function resetVideoDetails() {
-  document.getElementById('title').textContent = '';
+  document.getElementById('title').textContent = 'Please enter a YouTube URL or ID above.';
   document.getElementById('channel').textContent = '';
 
   document.getElementById('views').textContent = '';
