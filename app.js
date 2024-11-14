@@ -1,4 +1,4 @@
-const { getFormats, downloadVideoFromFormat } = require('./youtube');
+const { getFormats, downloadVideoFromFormat, status } = require('./youtube');
 
 const fs = require('fs');
 
@@ -54,9 +54,30 @@ app.post('/download', async (req, res) => {
     return;
   }
 
-  const filepaths = await downloadVideoFromFormat(req.body.id, req.body.extension, req.body.videoQuality, req.body.audioQuality);
-  console.log(filepaths);
-  res.send(filepaths);
+  downloadVideoFromFormat(req.body.id, req.body.extension, req.body.videoQuality, req.body.audioQuality);
+  res.end();
+});
+
+app.post('/status', async (req, res) => {
+  console.log(req.body);
+  if (!req.body.extension || !req.body.videoQuality || !req.body.audioQuality || !req.body.id) {
+    res.end();
+    return;
+  }
+
+  const identifyingString = req.body.id + req.body.extension + req.body.videoQuality + req.body.audioQuality;
+
+  if (status[identifyingString]) {
+    res.send({
+      done: !status[identifyingString].endsWith('...'),
+      status: status[identifyingString]
+    });
+  } else {
+    res.send({
+      done: true,
+      status: 'Error: Video not found.'
+    });
+  }
 });
 
 app.listen(9356, () => {

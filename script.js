@@ -1,6 +1,11 @@
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 document.getElementById('url-submit').addEventListener('click', getVideoInfo);
 
+let doneDownloading = true;
 document.getElementById('downloadVideo').addEventListener('click', async () => {
+  if (!doneDownloading) return;
+  
   const id = document.getElementById('youtube-video-container').getAttribute('youtube-id');
   const extension = document.getElementById('extension').value;
   const videoQuality = document.getElementById('videoQuality').value;
@@ -8,7 +13,7 @@ document.getElementById('downloadVideo').addEventListener('click', async () => {
 
   console.log(id, extension, videoQuality, audioQuality);
 
-  const res = await fetch('/download', {
+  await fetch('/download', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -16,16 +21,36 @@ document.getElementById('downloadVideo').addEventListener('click', async () => {
     },
     body: JSON.stringify({ id, extension, videoQuality, audioQuality })
   });
-  const json = await res.json();
 
-  console.log(json);
+  doneDownloading = false;
+  while (!doneDownloading) {
+    const res = await fetch('/status', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id, extension, videoQuality, audioQuality })
+    });
+    const json = await res.json();
 
-  if (json.error) {
-    console.error(json.error);
-    return;
+    console.log(json);
+
+    document.getElementById('video-status-string').textContent = json.status;
+
+    if (json.done) {
+      document.getElementById('video-status-string').textContent = 'File is being downloaded.';
+      downloadFile(json.status, document.getElementById('title').textContent);
+      
+      await sleep(1000);
+      document.getElementById('video-status-string').textContent = 'Click the Download button to start downloading.';
+
+      doneDownloading = true;
+    } else {
+      document.getElementById('video-status-string').textContent = json.status;
+      await sleep(1000);
+    }
   }
-
-  downloadFile(json.filePath, document.getElementById('title').textContent);
 });
 
 resetVideoDetails();
@@ -131,6 +156,7 @@ function resetVideoDetails() {
   document.getElementById('extension').textContent = '';
   document.getElementById('videoQuality').textContent = '';
   document.getElementById('audioQuality').textContent = '';
+  document.getElementById('video-status-string').textContent = 'Click the Download button to start downloading.';
 }
 
 function downloadFile(url, filename) {

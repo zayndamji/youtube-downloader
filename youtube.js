@@ -7,6 +7,8 @@ if (!fs.existsSync('cache/')) {
   fs.mkdirSync('cache/');
 }
 
+const status = {};
+
 async function getFormats(url) {
   const info = await getVideoInfo(url);
   if (info.error) return info;
@@ -112,16 +114,23 @@ async function downloadVideo(id, itag) {
 }
 
 async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQuality) {
+  const identifyingString = id + fileExtension + videoQuality + audioQuality;
+
   const info = await getFormats(id);
-  if (info.error) return info;
+  if (info.error) {
+    status[identifyingString] = info.error;
+    return info;
+  }
 
   const { video, audio } = info;
 
   let videoPath;
   for (const [ extension, quality, itag ] of video) {
     if (extension == fileExtension && quality == videoQuality) {
+      status[identifyingString] = 'Processing video file...';
       videoPath = await downloadVideo(id, itag);
       if (!videoPath) {
+        status[identifyingString] = 'Unable to process video.';
         return {
           error: 'Unable to process video.'
         }
@@ -134,8 +143,10 @@ async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQua
   let audioPath;
   for (const [ extension, quality, itag ] of audio) {
     if (extension == fileExtension && quality == audioQuality) {
+      status[identifyingString] = 'Processing audio file...';
       audioPath = await downloadVideo(id, itag);
       if (!audioPath) {
+        status[identifyingString] = 'Unable to process audio.';
         return {
           error: 'Unable to process audio.'
         }
@@ -149,6 +160,7 @@ async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQua
   console.log('Output file: ' + filePath);
 
   if (!fs.existsSync(filePath)) {
+    status[identifyingString] = 'Combining video and audio files...';
     let done = false;
     ffmpeg()
       .input(videoPath)
@@ -166,6 +178,7 @@ async function downloadVideoFromFormat(id, fileExtension, videoQuality, audioQua
   }
 
   console.log('File is combined.');
+  status[identifyingString] = '/cache' + filePath.substring(filePath.lastIndexOf('/'));
 
   return {
     filePath: '/cache' + filePath.substring(filePath.lastIndexOf('/'))
@@ -185,5 +198,6 @@ function getExtension(format) {
 
 module.exports = {
   getFormats,
-  downloadVideoFromFormat
+  downloadVideoFromFormat,
+  status
 };
