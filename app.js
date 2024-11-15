@@ -80,8 +80,8 @@ app.post('/status', async (req, res) => {
   }
 });
 
-app.listen(80, () => {
-  console.log('Server opened on http://localhost:80');
+app.listen(9356, () => {
+  console.log('Server opened on http://localhost:9356');
 });
 
 const cacheRefreshTimeHours = 2;
